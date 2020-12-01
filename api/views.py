@@ -90,8 +90,9 @@ def check(request):
 @api_view(["GET"])
 def user(request):
 
-    # token = request.headers.get("Authorization").split(" ")[1]
-    token = request.GET["token"]
+    print(request.headers)
+
+    token = request.headers.get("Authorization").split(" ")[1]
 
     # find the player by given access token
     try: 
