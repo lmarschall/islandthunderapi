@@ -21,12 +21,13 @@ import json
 # Create your views here.
 
 # api endpoint for the user to generate authentication token
-@api_view(["POST"])
+@api_view(["GET"])
 # @permission_classes((AllowAny,))
 def auth(request):
 
     # # get the steam uid
-    uid = request.data.get("uid")
+    uid = request.GET["uid"]
+    print(uid)
 
     if uid is None:
         return Response({'error': 'Please provide uid'}, status=HTTP_400_BAD_REQUEST)
@@ -47,6 +48,7 @@ def auth(request):
 
     # save auth token to player
     player.token = token
+    player.authorized = False
     player.save()
 
     # TODO token framework implementation
@@ -56,12 +58,12 @@ def auth(request):
     return Response({"auth_token": token})
 
 # api endpoint for the server to check authentication token and generate bearer token
-@api_view(["POST"])
+@api_view(["GET"])
 def check(request):
 
     # get uid and auth token from request
-    uid = request.data.get("uid")
-    token = request.data.get("token")
+    uid = request.GET["uid"]
+    token = request.GET["token"]
 
     # search for steam uid in database
     try:
@@ -88,7 +90,8 @@ def check(request):
 @api_view(["GET"])
 def user(request):
 
-    token = request.headers.get("Authorization").split(" ")[1]
+    # token = request.headers.get("Authorization").split(" ")[1]
+    token = request.GET["token"]
 
     # find the player by given access token
     try: 
